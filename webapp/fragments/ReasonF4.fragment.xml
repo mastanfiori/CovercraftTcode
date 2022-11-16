@@ -1,0 +1,14 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
+    <SelectDialog
+        id="_IDGenSelectDialogGrund"
+        title="{labels>/#RmanPrspReasonShlp/Grund/@sap:label}"
+        class="sapUiPopupWithPadding"
+        items="{FinishPrcReasonCodes>/}"
+        search="_handleReasonValueHelpSearch"
+        confirm="_handleReasonValueHelpConfirm"
+        cancel="_handleValueHelpDialogClose"
+        liveChange="_handleReasonValueHelpSearch"
+    >
+        <StandardListItem id="_IDGenStandardListItemReason" title="{FinishPrcReasonCodes>Grund}" description="{FinishPrcReasonCodes>Grdtx}" />
+    </SelectDialog>
+</core:FragmentDefinition>

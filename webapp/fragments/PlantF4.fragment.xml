@@ -1,0 +1,14 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
+    <SelectDialog
+        id="_IDGenSelectDialogPlant"
+        title="{labels>/#PRDORD_STRT_OPR/Plant/@sap:label}"
+        class="sapUiPopupWithPadding"
+        items="{/VL_SH_H_T001W}"
+        search="_handlePlantValueHelpSearch"
+        confirm="_handlePlantValueHelpConfirm"
+        cancel="_handleValueHelpDialogClose"
+        liveChange="_handlePlantValueHelpSearch"
+    >
+        <StandardListItem id="_IDGenStandardListItemPlant" title="{WERKS}" />
+    </SelectDialog>
+</core:FragmentDefinition>

@@ -1,0 +1,85 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <TableSelectDialog
+        noDataText="No Activities Found"
+        title="Select {labels>/#PRDORD_OPR_GET/ProdOrdOpr/@sap:label}"
+        liveChange="_handleActivityValueHelpSearch"
+        search="_handleActivityValueHelpSearch"
+        confirm="_handleActivityValueHelpConfirm"
+        cancel="_handleActivityValueHelpClose"
+        showClearButton="false"
+        items="{
+			path : 'PrdOrdActivityData>/'
+		}"
+        resizable="true"
+        draggable="true"
+        contentHeight="60%"
+        contentWidth="60%"
+    >
+        <ColumnListItem selected="{selected}">
+            <cells>
+                <ObjectIdentifier title="{PrdOrdActivityData>ProdOrdOpr}" />
+                <Text text="{PrdOrdActivityData>Seq}" />
+                <!-- <Text id="_IDGenText2" text="{PrdOrdActivityData>OprQuantity} {PrdOrdActivityData>OprUoM}" /> -->
+                <ObjectNumber number="{
+						parts:[{path:'PrdOrdActivityData>OprQuantity'},{path:'PrdOrdActivityData>OprUoM'}],
+						type: 'sap.ui.model.type.Unit',
+						formatOptions: {showMeasure: false}
+					}" unit="{PrdOrdActivityData>OprUoM}" />
+                <Text text="{PrdOrdActivityData>OprShrtTxt}" />
+                <Text text="{PrdOrdActivityData>OprYield}" />
+                <Text text="{PrdOrdActivityData>OprScrp}" />
+                <Text text="{PrdOrdActivityData>OprRwrk}" />
+                <Text text="{PrdOrdActivityData>MileStoneInd}" />
+                <Text text="{PrdOrdActivityData>SystemStatus}" />
+            </cells>
+        </ColumnListItem>
+        <columns>
+            <Column hAlign="Right">
+                <header>
+                    <Text text="{labels>/#PRDORD_OPR_GET/ProdOrdOpr/@sap:label}" />
+                </header>
+            </Column>
+            <Column minScreenWidth="Tablet" demandPopin="true" hAlign="Right">
+                <header>
+                    <Text text="{labels>/#PRDORD_OPR_GET/Seq/@sap:label}" />
+                </header>
+            </Column>
+            <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Left">
+                <header>
+                    <Text text="{labels>/#PRDORD_OPR_GET/OprQuantity/@sap:label}" />
+                </header>
+            </Column>
+            <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                <header>
+                    <Text text="{labels>/#PRDORD_OPR_GET/OprShrtTxt/@sap:label}" />
+                </header>
+            </Column>
+            <Column hAlign="End">
+                <header>
+                    <Text text="{labels>/#PRDORD_OPR_GET/OprYield/@sap:label}" />
+                </header>
+            </Column>
+            <Column hAlign="End">
+                <header>
+                    <Text text="{labels>/#PRDORD_OPR_GET/OprScrp/@sap:label}" />
+                </header>
+            </Column>
+            <Column hAlign="End">
+                <header>
+                    <Text text="{labels>/#PRDORD_OPR_GET/OprRwrk/@sap:label}" />
+                </header>
+            </Column>
+
+            <Column hAlign="End">
+                <header>
+                    <Text text="{labels>/#PRDORD_OPR_GET/MileStoneInd/@sap:label}" />
+                </header>
+            </Column>
+            <Column hAlign="End">
+                <header>
+                    <Text text="{labels>/#PRDORD_OPR_GET/SystemStatus/@sap:label}" />
+                </header>
+            </Column>
+        </columns>
+    </TableSelectDialog>
+</core:FragmentDefinition>

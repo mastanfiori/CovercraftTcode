@@ -1,0 +1,26 @@
+<mvc:View controllerName="com.covercraft.NTTData.ProdOrdCnfrmPrcs.covercraftpp.controller.Worklist" xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:semantic="sap.m.semantic">
+    <semantic:FullscreenPage id="page" showFooter="true" enableScrolling="true" class="sapFioriListReportPageOverflow" floatingFooter="true">
+        <!-- <semantic:titleHeading>
+            <Title id="_IDGenTitle1" text="{i18n>worklistTitle}" level="H2" />
+        </semantic:titleHeading> -->
+
+        <semantic:content>
+            <IconTabBar id="idIconTabBar" expanded="{device>/isNoPhone}" class="sapUiResponsiveContentPadding" select="onIconTabSelection">
+                <items>
+                    <IconTabFilter id="_IDGenIconTabFilter1" text="{i18n>StartProcess}" key="StartProcess">
+                        <core:Fragment id="_IDGenFragment1" fragmentName="com.covercraft.NTTData.ProdOrdCnfrmPrcs.covercraftpp.fragments.StartProcess" type="XML" />
+                    </IconTabFilter>
+                    <IconTabFilter id="_IDGenIconTabFilter2" text="{i18n>FinishProcess}" key="FinishProcess">
+                        <core:Fragment id="_IDGenFragment2" fragmentName="com.covercraft.NTTData.ProdOrdCnfrmPrcs.covercraftpp.fragments.FinishProcess" type="XML" />
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </semantic:content>
+        <!-- Custom Footer Content-->
+        <semantic:customFooterContent>
+            <Button id="popover" icon="sap-icon://message-popup" text="{=${oMsgModel>/}.length}" type="Emphasized" press="handleMessagePopoverPress" class="rightContent" visible="false" />
+            <!-- Save -->
+            <Button id="so.upload.btnSave" tooltip="{i18n>Save}" type="Emphasized" text="{i18n>Save}" press="onSave" />
+        </semantic:customFooterContent>
+    </semantic:FullscreenPage>
+</mvc:View>

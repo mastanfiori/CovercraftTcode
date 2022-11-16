@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
+
+specVersion: "2.5"
+metadata:
+  name: com.covercraft.NTTData.ProdOrdCnfrmPrcs.covercraftpp
+type: application
+builder:
+  resources:
+    excludes:
+      - /test/**
+      - /localService/**
+  customTasks:
+    - name: deploy-to-abap
+      afterTask: generateCachebusterInfo
+      configuration:
+        target:
+          destination: DS4_BAS_200_WS1
+          url: http://ws1:8000
+        app:
+          name: ZPRDORDCNFRPRCS
+          description: Production order Confirmation Process
+          package: ZPP
+          transport: DS4K901046

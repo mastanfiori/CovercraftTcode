@@ -1,0 +1,53 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:smartField="sap.ui.comp.smartfield" xmlns:ndc="sap.ndc">
+    <f:SimpleForm
+        id="SimpleFormChange354"
+        editable="true"
+        layout="ResponsiveGridLayout"
+        labelSpanXL="3"
+        labelSpanL="3"
+        labelSpanM="3"
+        labelSpanS="12"
+        adjustLabelSpan="false"
+        emptySpanXL="4"
+        emptySpanL="2"
+        emptySpanM="1"
+        emptySpanS="0"
+        columnsXL="1"
+        columnsL="1"
+        columnsM="1"
+        singleContainerFullSize="true"
+    >
+        <f:content>
+            <Label id="_IDGenLabel1" text="{labels>/#PRDORD_STRT_OPR/ProdOrd/@sap:label}" required="true"/>
+            <!-- <smartField:SmartField id="idProdOrd" name="ProdOrd" value="{ProdOrd}" showValueHelp="true" contextEditable="true" entitySet="PRDORD_STRT_OPRSet" change="onProdOrderChange" /> -->
+            <Input id="idProdOrd" name="StartProdOrd" value="{startProcessModel>/ProdOrd}" showSuggestion="false" showValueHelp="true" valueHelpOnly="false" valueHelpRequest="onProdOrdF4" change="onProdOrderChange" maxLength="12"/>
+            <ndc:BarcodeScannerButton id="ProdOrdBarcodeScannerButton" scanSuccess="onProdOrdScanSuccess" scanFail="onScanError" dialogTitle="{i18n>ProdOrdScan}" />
+            <Label id="_IDGenLabel2" text="{labels>/#PRDORD_STRT_OPR/ProdOrdOpr/@sap:label}" required="true"/>
+            <Input id="idProdOrdOpr" name="StartPrcProdOrdOpr" value="{startProcessModel>/ProdOrdOpr}" showSuggestion="false" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onProdOrdOprF4" maxLength="4" editable="{startProcessModel>/formEditable}" />
+            <!-- <smartField:SmartField id="idProdOrdOpr" name="ProdOrdOpr" value="{ProdOrdOpr}" showValueHelp="true" contextEditable="true" entitySet="PRDORD_STRT_OPRSet" change="onProdOrderChange" /> -->
+            <Label id="_IDGenLabel3" text="{labels>/#PRDORD_STRT_OPR/PersNo/@sap:label}" required="true"/>
+            <Input id="idPersNo" name="startPrcPersNo" value="{startProcessModel>/PersNo}" showSuggestion="false" showValueHelp="false" valueHelpOnly="false" maxLength="8" valueHelpRequest="onPersNoF4" change="onStartProcessFormInputChange" editable="{startProcessModel>/formEditable}" />
+            <!-- <smartField:SmartField id="idPersNo" name="PersNo" value="{PersNo}" showValueHelp="true" contextEditable="true" entitySet="PRDORD_STRT_OPRSet" change="onPersNoChange" /> -->
+            <ndc:BarcodeScannerButton id="PersNoBarcodeScannerButton" scanSuccess="onPersNoScanSuccess" scanFail="onScanError" dialogTitle="{i18n>PersNoScan}" />
+            <Label id="_IDGenLabel8" text="{labels>/#PRDORD_STRT_OPR/TimeIdNum/@sap:label}" />
+            <Input id="_IDGenInput3" value="{startProcessModel>/TimeIdNum}" name="TimeIdNum" change="onStartProcessFormInputChange" editable="{startProcessModel>/formEditable}" maxLength="8"/>
+            <Label id="_IDGenLabel9" text="{labels>/#PRDORD_STRT_OPR/StrtOfSetDate/@sap:label}" />
+            <DatePicker
+                id="_IDStrtOfSetDate"
+                name="startPrcStrtOfSetDate"
+                value="{path:'startProcessModel>/StrtOfSetDate',type: 'sap.ui.model.type.Date',formatOptions: { strictParsing: true , UTC: true }}"
+                minDate="{startProcessModel>/StrtOfSetDateMiniDate}"
+                editable="{startProcessModel>/formEditable}"
+            />
+            <TimePicker id="_IDStrtOfSetTime" name="startPrcStrtOfSetTime" value="{path:'startProcessModel>/StrtOfSetTime'}" editable="{startProcessModel>/formEditable}" change="onStartProcessFormInputChange" />
+            <Label id="_IDGenLabel10" text="{labels>/#PRDORD_STRT_OPR/WrkCenter/@sap:label}" />
+            <Input id="idWrkCenter" value="{startProcessModel>/WrkCenter}" name="startPrcWrkCenter" change="onStartProcessFormInputChange" editable="{startProcessModel>/formEditable}" maxLength="8"/>
+            <!-- <smartField:SmartField id="idWrkCenter" name="WrkCenter" value="{WrkCenter}" showValueHelp="true" editable="{startProcessModel>/formEditable}" entitySet="PRDORD_STRT_OPRSet" change="onWrkCenterChange" /> -->
+            <Label id="_IDGenLabel15" text="{labels>/#PRDORD_STRT_OPR/Plant/@sap:label}" />
+            <Input id="idPlant" value="{startProcessModel>/Plant}" name="startPrcPlant" showSuggestion="false" showValueHelp="true" valueHelpRequest="onPlantF4" change="onStartProcessFormInputChange" editable="{startProcessModel>/formEditable}" maxLength="4"/>
+            <!-- <smartField:SmartField id="idPlant" name="Plant" value="{Plant}" showValueHelp="true" contextEditable="{startProcessModel>/formEditable}" entitySet="PRDORD_STRT_OPRSet" change="onPlantChange" /> -->
+            <Label id="_IDGenLabel25" text="{labels>/#PRDORD_STRT_OPR/ConfrmText/@sap:label}" />
+            <TextArea id="_IDGenTextArea1" value="{startProcessModel>/ConfrmText}" maxLength="40" growing="true" growingMaxLines="7" rows="5" editable="{startProcessModel>/formEditable}"/>
+        </f:content>
+    </f:SimpleForm>
+</core:FragmentDefinition>

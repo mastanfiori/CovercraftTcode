@@ -1,0 +1,14 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
+    <SelectDialog
+        id="_IDGenSelectDialog1"
+        title="{labels>/#PRDORD_STRT_OPR/ProdOrdOpr/@sap:label}"
+        class="sapUiPopupWithPadding"
+        items="{PrdOrdActivityData>/}"
+        search="_handleActivityValueHelpSearch"
+        confirm="_handleActivityValueHelpConfirm"
+        cancel="_handleValueHelpDialogClose"
+        liveChange="_handleActivityValueHelpSearch"
+    >
+        <StandardListItem id="_IDGenStandardListItem1" title="{PrdOrdActivityData>ProdOrdOpr}" />
+    </SelectDialog>
+</core:FragmentDefinition>

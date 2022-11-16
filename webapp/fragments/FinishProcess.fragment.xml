@@ -1,0 +1,62 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:smartField="sap.ui.comp.smartfield" xmlns:ndc="sap.ndc">
+    <f:SimpleForm
+        id="SimpleFormChange3545"
+        editable="true"
+        layout="ResponsiveGridLayout"
+        labelSpanXL="3"
+        labelSpanL="3"
+        labelSpanM="3"
+        labelSpanS="12"
+        adjustLabelSpan="false"
+        emptySpanXL="4"
+        emptySpanL="2"
+        emptySpanM="1"
+        emptySpanS="0"
+        columnsXL="1"
+        columnsL="1"
+        columnsM="1"
+        singleContainerFullSize="true"
+    >
+        <f:content>
+            <Label id="_IDGenLabelfpFincalConf" text="{labels>/#PRDORD_FINISH_OPR/FinalConf/@sap:label}" />
+            <Switch id="_IDGenSwitch1" state="{finishProcessModel>/FinalConf}" customTextOn="Yes" customTextOff="No" />
+            <Label id="_IDGenLabelfp1" text="{labels>/#PRDORD_FINISH_OPR/ProdOrd/@sap:label}" required="true" />
+            <!-- <smartField:SmartField id="idProdOrd" name="ProdOrd" value="{ProdOrd}" showValueHelp="true" contextEditable="true" entitySet="PRDORD_FINISH_OPRSet" change="onProdOrderChange" /> -->
+            <Input id="idProdOrdfp" name="FinishProdOrd" value="{finishProcessModel>/ProdOrd}" showSuggestion="false" showValueHelp="true" valueHelpOnly="false" valueHelpRequest="onProdOrdF4" change="onProdOrderChange" maxLength="12" />
+            <ndc:BarcodeScannerButton id="ProdOrdBarcodeScannerButtonfp" scanSuccess="onProdOrdScanFPSuccess" scanFail="onScanFPError" dialogTitle="{i18n>ProdOrdScan}" />
+            <Label id="_IDGenLabelfp2" text="{labels>/#PRDORD_FINISH_OPR/ProdOrdOpr/@sap:label}" required="true" />
+            <Input id="idProdOrdOprfp" name="FinishPrcProdOrdOpr" value="{finishProcessModel>/ProdOrdOpr}" showSuggestion="false" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onProdOrdOprF4" editable="{finishProcessModel>/formEditable}" maxLength="4" />
+            <!-- <smartField:SmartField id="idProdOrdOpr" name="ProdOrdOpr" value="{ProdOrdOpr}" showValueHelp="true" contextEditable="true" entitySet="PRDORD_FINISH_OPRSet" change="onProdOrderChange" /> -->
+            <Label id="_IDGenLabelfp3" text="{labels>/#PRDORD_FINISH_OPR/PersNo/@sap:label}" required="true" />
+            <Input id="idPersNofp" name="finishPrcPersNo" value="{finishProcessModel>/PersNo}" showSuggestion="false" showValueHelp="false" valueHelpOnly="false" change="onFinishProcessFormInputChange" editable="{finishProcessModel>/formEditable}" maxLength="8" />
+            <!-- <smartField:SmartField id="idPersNo" name="PersNo" value="{PersNo}" showValueHelp="true" contextEditable="true" entitySet="PRDORD_FINISH_OPRSet" change="onPersNoChange" /> -->
+            <ndc:BarcodeScannerButton id="PersNoBarcodeScannerButtonFP" scanSuccess="onPersNoFPScanSuccess" scanFail="onScanError" dialogTitle="{i18n>PersNoScan}" />
+            <Label id="_IDGenLabelfp8" text="{labels>/#PRDORD_FINISH_OPR/TimeIdNum/@sap:label}" />
+            <Input id="_IDGenInputfp3" value="{finishProcessModel>/TimeIdNum}" name="TimeIdNum" change="onFinishProcessFormInputChange" editable="{finishProcessModel>/formEditable}" maxLength="8" />
+            <Label id="_IDGenLabelfp9" text="{labels>/#PRDORD_FINISH_OPR/FinshOfSetDate/@sap:label}" />
+            <DatePicker
+                id="_IDStrtOfSetDatefp"
+                name="{labels>/#PRDORD_FINISH_OPR/FinshOfSetDate/@sap:label}"
+                value="{path:'finishProcessModel>/FinshOfSetDate',type: 'sap.ui.model.type.Date',formatOptions: { strictParsing: true , UTC: true }}"
+                minDate="{finishProcessModel>/FinshOfSetDateMiniDate}"
+                editable="{finishProcessModel>/formEditable}"
+            />
+            <TimePicker id="_IDFinshOfSetTime" name="{labels>/#PRDORD_FINISH_OPR/FinshOfSetTime/@sap:label}" value="{path:'finishProcessModel>/FinshOfSetTime'}" editable="{finishProcessModel>/formEditable}" />
+            <Label id="_IDGenLabelfp10" text="{labels>/#PRDORD_FINISH_OPR/Yield/@sap:label}" required="true" />
+            <Input id="idYieldfp" name="Yield" value="{finishProcessModel>/Yield}" showSuggestion="false" showValueHelp="false" valueHelpOnly="false" change="onFinishProcessFormDecimalInputChange" editable="{finishProcessModel>/formEditable}" />
+            <!-- <Input id="idYieldUomfp" name="{labels>/#PRDORD_FINISH_OPR/YieldUom/@sap:label}" value="{finishProcessModel>/YieldUom}" showSuggestion="false" showValueHelp="true" valueHelpOnly="false" change="onYieldUomChange" editable="{finishProcessModel>/formEditable}" /> -->
+            <smartField:SmartField id="idYieldUomfp" name="YieldUom" value="{YieldUom}" showValueHelp="true" contextEditable="{finishProcessModel>/formEditable}" entitySet="PRDORD_FINISH_OPRSet" />
+
+            <Label id="_IDGenLabelfp11" text="{labels>/#PRDORD_FINISH_OPR/ScrapQty/@sap:label}" />
+            <Input id="idScrapQtyfp" name="ScrapQty" value="{finishProcessModel>/ScrapQty}" showSuggestion="false" showValueHelp="false" valueHelpOnly="false" change="onFinishProcessFormDecimalInputChange" editable="{finishProcessModel>/formEditable}" />
+            <Label id="_IDGenLabelfp12" text="{labels>/#PRDORD_FINISH_OPR/RewrkQty/@sap:label}" />
+            <Input id="idRewrkQtyfp" name="RewrkQty" value="{finishProcessModel>/RewrkQty}" showSuggestion="false" showValueHelp="false" valueHelpOnly="false" change="onFinishProcessFormDecimalInputChange" editable="{finishProcessModel>/formEditable}" />
+            <Label id="_IDGenLabelfp13" text="{labels>/#PRDORD_FINISH_OPR/ReasnVar/@sap:label}" required="{finishProcessModel>/ReasnVarMandatory}" />
+            <Input id="idReasnVarfp" name="ReasnVar" value="{finishProcessModel>/ReasnVar}" showSuggestion="false" showValueHelp="true" valueHelpOnly="false" valueHelpRequest="onReasonF4" change="onFinishProcessFormInputChange" editable="{finishProcessModel>/formEditable}" maxLength="4" />
+            <Label id="_IDGenLabel15Plant" text="{labels>/#PRDORD_STRT_OPR/Plant/@sap:label}" />
+            <Input id="idPlantfp" value="{finishProcessModel>/Plant}" name="finishPrcPlant" showSuggestion="false" showValueHelp="true" valueHelpRequest="onPlantF4" change="onFinishProcessFormInputChange" editable="false" maxLength="4" />
+            <Label id="_IDGenLabelfp25" text="{labels>/#PRDORD_FINISH_OPR/ConfrmText/@sap:label}" />
+            <TextArea id="_IDGenTextAreafp1" value="{finishProcessModel>/ConfrmText}" maxLength="40" growing="true" growingMaxLines="7" rows="5" editable="{finishProcessModel>/formEditable}" />
+        </f:content>
+    </f:SimpleForm>
+</core:FragmentDefinition>

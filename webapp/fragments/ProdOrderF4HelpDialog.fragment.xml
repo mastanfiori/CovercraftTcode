@@ -1,0 +1,33 @@
+<core:FragmentDefinition xmlns="sap.ui.comp.valuehelpdialog" xmlns:m="sap.m" xmlns:fb="sap.ui.comp.filterbar" xmlns:core="sap.ui.core"
+	xmlns:table="sap.ui.table" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar">
+	<ValueHelpDialog id="_IDGenValueHelpDialog1" title="{labels>/#PRDORD_STRT_OPR/ProdOrd/@sap:label}" ok="_handleProdOrdValueHelpConfirm" cancel="_handleProdOrdValueHelpDialogClose"
+		afterClose="_handleProdOrdValueHelpDialogClose" supportRanges="false" keys="AUFNR,KOKRS,ABKRS" key="AUFNR"
+		descriptionKey="KTEXT" supportMultiselect="false">
+		<filterBar>
+			<fb:FilterBar id="_IDGenFilterBar1" advancedMode="true" search=".onFilterBarSearch">
+				<fb:filterGroupItems>
+					<fb:FilterGroupItem id="_IDGenFilterGroupItem1" groupName="__$INTERNAL$" name="AUFNR" label="{labels>/#VL_SH_ORDEA/AUFNR/@sap:label}" visibleInFilterBar="true">
+						<fb:control>
+							<m:Input id="_IDGenInput1_AUFNR" name="AUFNR"/>
+						</fb:control>
+					</fb:FilterGroupItem>
+					<fb:FilterGroupItem id="_IDGenFilterGroupItem2" groupName="__$INTERNAL$" name="KTEXT" label="{labels>/#VL_SH_ORDEA/KTEXT/@sap:label}" visibleInFilterBar="true">
+						<fb:control>
+							<m:Input id="_IDGenInput2_KTEXT" name="KTEXT"/>				
+						</fb:control>
+					</fb:FilterGroupItem>
+					<fb:FilterGroupItem id="_IDGenFilterGroupItem3" groupName="__$INTERNAL$" name="KOKRS" label="{labels>/#VL_SH_ORDEA/KOKRS/@sap:label}" visibleInFilterBar="true">
+						<fb:control>
+							<m:Input id="_IDGenInput3_KTEXT" name="KTEXT"/>
+						</fb:control>
+					</fb:FilterGroupItem>
+					<fb:FilterGroupItem id="_IDGenFilterGroupItem4" groupName="__$INTERNAL$" name="ABKRS" label="{labels>/#VL_SH_ORDEA/ABKRS/@sap:label}" visibleInFilterBar="true">
+						<fb:control>
+							<m:Input id="_IDGenInput4_ABKRS" name="ABKRS"/>
+						</fb:control>
+					</fb:FilterGroupItem>
+				</fb:filterGroupItems>
+			</fb:FilterBar>
+		</filterBar>
+	</ValueHelpDialog>
+</core:FragmentDefinition>
