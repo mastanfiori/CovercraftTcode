@@ -6,11 +6,12 @@ sap.ui.define([
     "sap/ui/model/FilterOperator",
     "sap/m/MessageToast",
     "sap/m/MessageBox",
+    "sap/ui/core/Fragment",
     "com/covercraft/NTTData/ProdOrdCnfrmPrcs/covercraftpp/model/LogicHelper",
     "com/covercraft/NTTData/ProdOrdCnfrmPrcs/covercraftpp/model/Constants"
-], function (BaseController, JSONModel, formatter, Filter, FilterOperator, oMsgToast, oMsgBox, oLogicHelper, oConstants) {
+], function (BaseController, JSONModel, formatter, Filter, FilterOperator, oMsgToast, oMsgBox,Fragment, oLogicHelper, oConstants) {
     "use strict";
-    var i18n, sPath, oDataModel, regFloatExp = /^(?:[1-9]\d*|0)?(?:\.\d+)?$/gm, errorCount = 0, OpenQty = 0;
+    var i18n, sPath, oDataModel, regFloatExp = /^(?:[1-9]\d*|0)?(?:\.\d+)?$/gm, regIntExp = /^[0-9]{1,10}$/g, errorCount = 0,errorCount1 = 0, OpenQty = 0,StartPrcFlag = false, OpenOprQty = 0;
     return BaseController.extend("com.covercraft.NTTData.ProdOrdCnfrmPrcs.covercraftpp.controller.Worklist", {
 
         formatter: formatter,
@@ -155,12 +156,41 @@ sap.ui.define([
             // }
             this._valueHelpDialogProdOrder.open();
         },
+
+        onPersNoF4: function(oEvent){
+            if (!this._valueHelpDialogPerson) {
+                this._valueHelpDialogPerson = sap.ui.xmlfragment(
+                    "com.covercraft.NTTData.ProdOrdCnfrmPrcs.covercraftpp.fragments.PersonalNum",
+                    this
+                );
+                this.getView().addDependent(this._valueHelpDialogPerson);
+            }
+            this._valueHelpDialogPerson.open();
+        },
+       
+
+        _handlePersonValueHelpConfirm: function(oEvent){
+            debugger;
+            this.personActivityInput = oEvent.getSource();
+            var oSelectedPerson = oEvent.getParameter("selectedItem");
+            var sPersonValue = oSelectedPerson.getTitle();
+            // if (this.personActivityInput.getName() === oConstants.startPrcPersNo){
+            this.getView().getModel("startProcessModel").setProperty("/PersNo", sPersonValue);
+            // }
+            // else if (this.personActivityInput.getName()  === oConstants.finishPrcPersNo) {
+                this.getView().getModel("finishProcessModel").setProperty("/PersNo", sPersonValue);
+            // }
+       
+        },
+
         /**
         * Event handler of prod order change
         * @param {oEvt} Event Handle for prod order input
         * @public
         */
         onProdOrderChange: function (oEvt) {
+            debugger;
+            StartPrcFlag = true;
             var oVal = oEvt.getSource().getValue();
             this._oSource = oEvt.getSource();
             //check if given material is valid to DB or not
@@ -170,9 +200,11 @@ sap.ui.define([
             sap.ui.core.BusyIndicator.show();
             oLogicHelper.callGETOData(oDataModel, sPath, aFilters)
                 .then(function (response) {
+                    StartPrcFlag = false;
                     sap.ui.core.BusyIndicator.hide();
                     if (this._oSource.getName() === oConstants.StartProdOrd) {
                         if (response.results.length > 0) {
+                          
                             this._oSource.setValue(response.results[0].AUFNR);
                             this.getView().getModel("startProcessModel").setProperty("/ProdOrd", response.results[0].AUFNR);
                             this.getView().getModel("startProcessModel").setProperty("/formEditable", true);
@@ -195,6 +227,7 @@ sap.ui.define([
 
                 }.bind(this))
                 .catch(function (error) {
+                    StartPrcFlag = false;
                     sap.ui.core.BusyIndicator.hide();
                     // that.ErrorHandling(error);
                 });
@@ -335,6 +368,8 @@ sap.ui.define([
           *  @public
           */
         onStartProcessFormInputChange: function (oEvt) {
+            StartPrcFlag = true;
+            sap.ui.core.BusyIndicator.show();
             this._oSource = oEvt.getSource();
             var oName = oEvt.getSource().getName();
             var oVal = oEvt.getSource().getValue();
@@ -348,6 +383,7 @@ sap.ui.define([
                     sap.ui.core.BusyIndicator.show();
                     oLogicHelper.callGETOData(oDataModel, sPath, aFilters)
                         .then(function (response) {
+                            StartPrcFlag = false;
                             sap.ui.core.BusyIndicator.hide();
                             if (response.results.length > 0) {
                                 this._oSource.setValue(response.results[0].WERKS);
@@ -358,32 +394,38 @@ sap.ui.define([
                             }
                         }.bind(this))
                         .catch(function (error) {
+                            StartPrcFlag = false;
                             sap.ui.core.BusyIndicator.hide();
                             // that.ErrorHandling(error);
                         });
                     break;
                 case oConstants.startPrcWrkCenter:
+                    StartPrcFlag = false;
                     break;
                 case oConstants.startPrcPersNo:
+                    sap.ui.core.BusyIndicator.show();
                     sPath = "/PRDORD_GET_PRSNL_IDSet(PersNo='" + oVal + "',ProdOrd='" + startPrcData.ProdOrd + "',ProdOrdOpr='" + startPrcData.ProdOrdOpr + "',Flag='S')";
                     aFilters = [];
                     // aFilters.push(new sap.ui.model.Filter("PersNo", sap.ui.model.FilterOperator.EQ, oVal));
                     sap.ui.core.BusyIndicator.show();
                     oLogicHelper.callGETOData(oDataModel, sPath, aFilters)
                         .then(function (response) {
+                            StartPrcFlag = false;
                             sap.ui.core.BusyIndicator.hide();
                             if (this._oSource.getName() === oConstants.startPrcPersNo) {
                                 if (response.Message === "") {
                                     this._oSource.setValue(response.PersNo);
-                                    this.getView().getModel("startProcessModel").setProperty("/StrtOfSetTime", formatter.timeFormatter(response.SysTime));
+                                   this.getView().getModel("startProcessModel").setProperty("/StrtOfSetTime", formatter.timeFormatter(response.SysTime));
                                 } else {
                                     this._oSource.setValue("");
                                     this.getView().getModel("startProcessModel").setProperty("/PersNo", "");
                                     oMsgToast.show(response.Message);
+                                    // return;
                                 }
                             }
                         }.bind(this))
                         .catch(function (error) {
+                            StartPrcFlag = false;
                             sap.ui.core.BusyIndicator.hide();
                             // that.ErrorHandling(error);
                         });
@@ -462,31 +504,56 @@ sap.ui.define([
             */
         onFinishProcessFormDecimalInputChange: function (oEvt) {
             var oVal = oEvt.getSource().getValue();
+            debugger;
             var finisgPrcData = this.getView().getModel("finishProcessModel").getData();
             if (oVal.trim().length > 0) {
                 oVal = formatter.formatFloat(oVal);
-                if (!oVal.match(regFloatExp)) {
-                    oEvt.getSource().setValue("0.00");
+                oVal = oVal.toString();
+                if (!oVal.match(regIntExp)) {
+                    oEvt.getSource().setValue("0");
                     if (oEvt.getSource().getName() === oConstants.idRewrkQtyfp) {
                         this.getView().getModel("finishProcessModel").setProperty("/ReasnVarMandatory", false);
                     }
                 } else {
                     // all quanties should not be greater than Open Quantity
                     var totalQty = parseFloat(finisgPrcData.Yield) + parseFloat(finisgPrcData.ScrapQty) + parseFloat(finisgPrcData.RewrkQty);
+                    if (totalQty > parseFloat(OpenOprQty)){
+                        oMsgBox.error(i18n.getText("totalQtyMsg"));
+                    }
                     if (totalQty > parseFloat(OpenQty)) {
-                        oEvt.getSource().setValue("0.00");
-                        oMsgToast.show(i18n.getText("totalQtyMsg"));
+                        oEvt.getSource().setValue("0");
+                        // oMsgToast.show(i18n.getText("totalQtyMsg"));
+                        //Added by Mastan//
+                        if (totalQty === parseFloat(OpenQty)) {
+                            this.getView().getModel("finishProcessModel").setProperty("/FinalConf", true);
+                        } else {
+                            this.getView().getModel("finishProcessModel").setProperty("/FinalConf", false);
+                        }
+                        oEvt.getSource().setValue(oVal); 
+
+
                         return;
                     }
                     //reason code is mandatiry if rework qty entered
                     if (oEvt.getSource().getName() === oConstants.RewrkQty) {
-                        if (oVal === "0.00") {
+                        if (oVal === "0") {
                             this.getView().getModel("finishProcessModel").setProperty("/ReasnVarMandatory", false);
                         }
                         else {
                             this.getView().getModel("finishProcessModel").setProperty("/ReasnVarMandatory", true);
                         }
                     }
+                        //reason code is mandatiry if scrap entered by Mastan
+
+                        if (oEvt.getSource().getName() === oConstants.ScrapQty) {
+                            if (oVal === "0") {
+                                this.getView().getModel("finishProcessModel").setProperty("/ReasnVarMandatory", false);
+                            }
+                            else {
+                                this.getView().getModel("finishProcessModel").setProperty("/ReasnVarMandatory", true);
+                            }
+                        }
+
                     //enable final confirmation
                     if (totalQty === parseFloat(OpenQty)) {
                         this.getView().getModel("finishProcessModel").setProperty("/FinalConf", true);
@@ -496,7 +563,7 @@ sap.ui.define([
                     oEvt.getSource().setValue(oVal);
                 }
             } else {
-                oEvt.getSource().setValue("0.00");
+                oEvt.getSource().setValue("0");
                 if (oEvt.getSource().getName() === oConstants.idRewrkQtyfp) {
                     this.getView().getModel("finishProcessModel").setProperty("/ReasnVarMandatory", false);
                 }
@@ -527,14 +594,31 @@ sap.ui.define([
         /* internal methods                                            */
         /* =========================================================== */
         //Start process create call 
-        _startProcessCreate: function () {
+        _startProcessCreate: function (oEvent) {
+            // debugger;
+            // if( StartPrcFlag){
+            //     return;
+            // }
+            debugger;
+            // this._oSource = oEvent.getSource();
             var startProcessData = this.getView().getModel("startProcessModel").getData();
+
             if (startProcessData.formEditable) {
                 this._performValidations();
                 if (errorCount > 1) {
                     return;
                 }
-                sPath = "/PRDORD_STRT_OPRSet";
+                sPath = "/PRDORD_GET_PRSNL_IDSet(PersNo='" + startProcessData.PersNo + "',ProdOrd='" + startProcessData.ProdOrd + "',ProdOrdOpr='" + startProcessData.ProdOrdOpr + "',Flag='S')";
+                 var aFilters = [];
+                    // aFilters.push(new sap.ui.model.Filter("PersNo", sap.ui.model.FilterOperator.EQ, oVal));
+                    sap.ui.core.BusyIndicator.show();
+                    oLogicHelper.callGETOData(oDataModel, sPath, aFilters)
+                        .then(function (response) {
+                            StartPrcFlag = false;
+                            sap.ui.core.BusyIndicator.hide();
+                            if (this._oSource.getName() === oConstants.startPrcPersNo) {
+                                if (response.Message === "") {
+                                    sPath = "/PRDORD_STRT_OPRSet";
                 var oEntry = {
                     "ProdOrd": startProcessData.ProdOrd,
                     "ProdOrdOpr": startProcessData.ProdOrdOpr,
@@ -562,6 +646,26 @@ sap.ui.define([
                     success: oSuccess,
                     error: oError
                 });
+
+
+
+                                //     this._oSource.setValue(response.PersNo);
+                                //    this.getView().getModel("startProcessModel").setProperty("/StrtOfSetTime", formatter.timeFormatter(response.SysTime));
+                                } else {
+                                    this._oSource.setValue("");
+                                    this.getView().getModel("startProcessModel").setProperty("/PersNo", "");
+                                    oMsgToast.show(response.Message);
+                                    // return;
+                                }
+                            }
+                        }.bind(this))
+                        .catch(function (error) {
+                            StartPrcFlag = false;
+                            sap.ui.core.BusyIndicator.hide();
+                            // that.ErrorHandling(error);
+                        });
+
+                
             } else {
                 return;
             }
@@ -571,25 +675,29 @@ sap.ui.define([
             var startProcessData = this.getView().getModel("startProcessModel").getData();
             errorCount = 0;
             if (startProcessData.ProdOrd === "" || startProcessData.ProdOrd === undefined) {
-                errorCount += 1;
+                errorCount += 2;
             }
             if (startProcessData.ProdOrdOpr === "" || startProcessData.ProdOrdOpr === undefined) {
-                errorCount += 1;
+                errorCount += 2;
             }
             if (startProcessData.PersNo === "" || startProcessData.PersNo === undefined) {
-                errorCount += 1;
+
+                errorCount += 2;
             }
             if (errorCount > 1) {
                 oMsgBox.error(i18n.getText("PleaseEnterMandatoryValues"));
             }
+           
 
         },
+
+      
         //Finish process create call 
         _finishProcessCreate: function () {
             var finishProcessData = this.getView().getModel("finishProcessModel").getData();
             if (finishProcessData.formEditable) {
                 this._performFinishPrcValidations();
-                if (errorCount > 1) {
+                if (errorCount > 1 || errorCount1 > 1) {
                     return;
                 }
                 sPath = "/PRDORD_FINISH_OPRSet";
@@ -599,6 +707,7 @@ sap.ui.define([
                     "PersNo": finishProcessData.PersNo,
                     "TimeIdNum": finishProcessData.TimeIdNum,
                     "StrtOfSetDate": finishProcessData.StrtOfSetDate,
+                    "FinshOfSetDate" : finishProcessData.FinshOfSetDate,
                     "FinshOfSetTime": formatter.resolveTimeFormat(finishProcessData.FinshOfSetTime),
                     "ConfrmText": finishProcessData.ConfrmText,
                     "Yield": finishProcessData.Yield,
@@ -634,7 +743,9 @@ sap.ui.define([
         //Start Process validations
         _performFinishPrcValidations: function () {
             var finishProcessData = this.getView().getModel("finishProcessModel").getData();
+            var totalQty = parseFloat(finishProcessData.Yield) + parseFloat(finishProcessData.ScrapQty) + parseFloat(finishProcessData.RewrkQty);
             errorCount = 0;
+            errorCount1 = 0;
             if (finishProcessData.ProdOrd === "" || finishProcessData.ProdOrd === undefined) {
                 errorCount += 1;
             }
@@ -642,15 +753,46 @@ sap.ui.define([
                 errorCount += 1;
             }
             if (finishProcessData.PersNo === "" || finishProcessData.PersNo === undefined) {
-                errorCount += 1;
+                errorCount += 2;
             }
             if (parseFloat(finishProcessData.RewrkQty) > 0) {
                 if (finishProcessData.ReasnVar === "" || finishProcessData.ReasnVar === undefined) {
-                    errorCount += 1;
+                    errorCount += 2;
                 }
             }
+
+
+//Added by MAstan//
+if (parseFloat(finishProcessData.ScrapQty) > 0) {
+    if (finishProcessData.ReasnVar === "" || finishProcessData.ReasnVar === undefined) {
+        errorCount += 2;
+    }
+}
+
+// if (totalQty > parseFloat(OpenQty)) {
+    if (totalQty > OpenQty) {
+    debugger;
+    // oEvt.getSource().setValue("0");
+    errorCount1 += 2;
+    // oMsgBox.show(i18n.getText("totalQtyMsg"));
+}
+
+if (totalQty > OpenOprQty) {
+    debugger;
+    // oEvt.getSource().setValue("0");
+    errorCount1 += 2;
+    // oMsgBox.show(i18n.getText("totalQtyMsg"));
+}
+
+//ended by Mastan
+
             if (errorCount > 1) {
                 oMsgBox.error(i18n.getText("PleaseEnterMandatoryValues"));
+            }
+
+            //mastan
+            if (errorCount1 > 1) {
+                oMsgBox.error(i18n.getText("totalQtyMsg"));
             }
         },
         //Sets the model to be referenced by the xml file for the text
@@ -806,10 +948,10 @@ sap.ui.define([
             oBinding.filter([oFilter]);
         },
         /**
-* Event handler of Plant value help search
-* @param {oEvt} Event Handle for Plant value help dialog
-* @public
-*/
+        * Event handler of Plant value help search
+        * @param {oEvt} Event Handle for Plant value help dialog
+        * @public
+        */
         _handlePlantValueHelpSearch: function (oEvt) {
             var sValue = oEvt.getParameters().value;
             var oFilter = new sap.ui.model.Filter(
@@ -886,10 +1028,12 @@ sap.ui.define([
         * @public
         */
         _handleActivityValueHelpConfirm: function (oEvt) {
+            debugger;
             // var oSelectedProduct = oEvt.getParameter("selectedItem");
             // var oSelectedObject = oSelectedProduct.getBindingContext("PrdOrdActivityData").getObject();
             var oSelectedObject = oEvt.getParameters().selectedContexts[0].getObject()
             OpenQty = oSelectedObject.OpenQty;
+            OpenOprQty = oSelectedObject.OpenOprQty;
             // this.prodOrdActivityInput
             var sInputValue = oSelectedObject.ProdOrdOpr;
             if (this.prodOrdActivityInput.getName() === oConstants.StartPrcProdOrdOpr) {
@@ -939,12 +1083,12 @@ sap.ui.define([
                 "TimeIdNum": "",
                 "FinshOfSetDate": new Date(),
                 "FinshOfSetDateMiniDate": new Date(),
-                "FinshOfSetTime": new Date().toLocaleTimeString(),
+                "FinshOfSetTime": "", //new Date().toLocaleTimeString(),
                 "FinalConf": false,
-                "Yield": "0.00",
+                "Yield": "0",
                 "YieldUom": "",
-                "ScrapQty": "0.00",
-                "RewrkQty": "0.00",
+                "ScrapQty": "0",
+                "RewrkQty": "0",
                 "ReasnVar": "",
                 "ReasnVarMandatory": false,
                 "Plant": "",
