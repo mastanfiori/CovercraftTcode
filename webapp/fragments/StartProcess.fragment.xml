@@ -26,7 +26,7 @@
             <Input id="idProdOrdOpr" name="StartPrcProdOrdOpr" value="{startProcessModel>/ProdOrdOpr}" showSuggestion="false" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onProdOrdOprF4" maxLength="4" editable="{startProcessModel>/formEditable}" />
             <!-- <smartField:SmartField id="idProdOrdOpr" name="ProdOrdOpr" value="{ProdOrdOpr}" showValueHelp="true" contextEditable="true" entitySet="PRDORD_STRT_OPRSet" change="onProdOrderChange" /> -->
             <Label id="_IDGenLabel3" text="{labels>/#PRDORD_STRT_OPR/PersNo/@sap:label}" required="true"/>
-            <Input id="idPersNo" name="startPrcPersNo" value="{startProcessModel>/PersNo}" showSuggestion="false" showValueHelp="false" valueHelpOnly="false" maxLength="8" valueHelpRequest="onPersNoF4" change="onStartProcessFormInputChange" editable="{startProcessModel>/formEditable}" />
+            <Input id="idPersNo" name="startPrcPersNo" value="{startProcessModel>/PersNo}" showSuggestion="false" showValueHelp="true" valueHelpOnly="false"  valueHelpRequest="onPersNoF4" change="onStartProcessFormInputChange" editable="{startProcessModel>/formEditable}" />
             <!-- <smartField:SmartField id="idPersNo" name="PersNo" value="{PersNo}" showValueHelp="true" contextEditable="true" entitySet="PRDORD_STRT_OPRSet" change="onPersNoChange" /> -->
             <ndc:BarcodeScannerButton id="PersNoBarcodeScannerButton" scanSuccess="onPersNoScanSuccess" scanFail="onScanError" dialogTitle="{i18n>PersNoScan}" />
             <Label id="_IDGenLabel8" text="{labels>/#PRDORD_STRT_OPR/TimeIdNum/@sap:label}" />
