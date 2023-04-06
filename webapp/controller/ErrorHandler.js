@@ -15,7 +15,7 @@ sap.ui.define([
          * @public
          * @alias com.covercraft.NTTData.ProdOrdCnfrmPrcs.covercraftpp.controller.ErrorHandler
          */
-        constructor : function (oComponent) {
+        constructor: function (oComponent) {
             var oMessageManager = sap.ui.getCore().getMessageManager(),
                 oMessageModel = oMessageManager.getMessageModel(),
                 oResourceBundle = oComponent.getModel("i18n").getResourceBundle(),
@@ -51,16 +51,19 @@ sap.ui.define([
                 sErrorTitle = aMessages.length === 1 ? sErrorText : sMultipleErrors;
                 msgString = "";
                 msgArr = [];
+                // msgArr.refresh();
                 $.each(aMessages, function (e, r) {
                     if (r.code === "/IWBEP/CX_MGW_BUSI_EXCEPTION" || r.code === "/IWBEP/CX_MGW_TECH_EXCEPTION") {
-                        aMessages.splice(e, 1);
-                    } else {
+                        // aMessages.splice(e, 1);
+                    }
+                    else {
                         msgArr.push(r.message);
                         // msgString = msgString + r.message + '\r\n';
 
                     }
+
                 });
-                
+                debugger;
                 // msgString = msgArr.join('\r\n');
                 this._showServiceError(sErrorTitle, msgArr);
             }, this);
@@ -75,17 +78,18 @@ sap.ui.define([
          * @param {string} sDetails A technical error to be displayed on request
          * @private
          */
-        _showServiceError : function (sErrorTitle, sDetails) {
+        _showServiceError: function (sErrorTitle, sDetails) {
             this._bMessageOpen = true;
-            var sResponsivePaddingClasses = "sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer";            MessageBox.error(
+            var sResponsivePaddingClasses = "sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer"; MessageBox.error(
                 sErrorTitle,
                 {
-                    id : "serviceErrorMessageBox",
+                    id: "serviceErrorMessageBox",
                     details: sDetails,
                     styleClass: sResponsivePaddingClasses, //this._oComponent.getContentDensityClass(),
                     actions: [MessageBox.Action.CLOSE],
                     onClose: function () {
                         this._bMessageOpen = false;
+                        // msgArr.clear();
                     }.bind(this)
                 }
             );
