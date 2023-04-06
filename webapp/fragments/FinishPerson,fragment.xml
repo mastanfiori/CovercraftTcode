@@ -1,0 +1,19 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <!-- <SelectDialog id="personDialog" title="Personal Number" items="{path:'/PremjSet'}" search=".onValueHelpSearch" confirm=".onValueHelpConfirm" cancel=".onValueHelpClose">
+        <StandardListItem id="person" title="{PremjSet>Pernr}"/>
+    </SelectDialog> -->
+
+     <SelectDialog
+        id="_IDGenSelectDialogFinishPerson"
+        title="Personal Number"
+        class="sapUiPopupWithPadding"
+        items="{/PremjSet}"
+        search="_handleFinishPersonValueHelpSearch"
+        confirm="_handleFinishPersonValueHelpConfirm"
+        cancel="_handleFinishpersonHelpDialogClose"
+       
+    >
+        <StandardListItem id="_IDGenStandardListFinishItemPlant" title="{Pernr}" />
+    </SelectDialog>
+
+</core:FragmentDefinition>
