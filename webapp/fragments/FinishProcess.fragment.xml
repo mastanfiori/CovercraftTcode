@@ -28,7 +28,7 @@
             <Input id="idProdOrdOprfp" name="FinishPrcProdOrdOpr" value="{finishProcessModel>/ProdOrdOpr}" showSuggestion="false" showValueHelp="true" valueHelpOnly="true" valueHelpRequest="onProdOrdOprF4" editable="{finishProcessModel>/formEditable}" maxLength="4" />
             <!-- <smartField:SmartField id="idProdOrdOpr" name="ProdOrdOpr" value="{ProdOrdOpr}" showValueHelp="true" contextEditable="true" entitySet="PRDORD_FINISH_OPRSet" change="onProdOrderChange" /> -->
             <Label id="_IDGenLabelfp3" text="{labels>/#PRDORD_FINISH_OPR/PersNo/@sap:label}" required="true" />
-            <Input id="idPersNofp" name="finishPrcPersNo" value="{finishProcessModel>/PersNo}" showSuggestion="false" showValueHelp="true" valueHelpRequest="onPersNoF4"  valueHelpOnly="false" change="onFinishProcessFormInputChange" editable="{finishProcessModel>/formEditable}"  />
+            <Input id="idPersNofp" name="finishPrcPersNo" value="{finishProcessModel>/PersNo}" showSuggestion="false" showValueHelp="true" valueHelpRequest="onFinishPersNoF4"  valueHelpOnly="false" change="onFinishProcessFormInputChange" editable="{finishProcessModel>/formEditable}"  />
             <!-- <smartField:SmartField id="idPersNo" name="PersNo" value="{PersNo}" showValueHelp="true" contextEditable="true" entitySet="PRDORD_FINISH_OPRSet" change="onPersNoChange" /> -->
             <ndc:BarcodeScannerButton id="PersNoBarcodeScannerButtonFP" scanSuccess="onPersNoFPScanSuccess" scanFail="onScanError" dialogTitle="{i18n>PersNoScan}" />
             <Label id="_IDGenLabelfp8" text="{labels>/#PRDORD_FINISH_OPR/TimeIdNum/@sap:label}" />
