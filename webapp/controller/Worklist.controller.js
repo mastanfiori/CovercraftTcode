@@ -9,9 +9,9 @@ sap.ui.define([
     "sap/ui/core/Fragment",
     "com/covercraft/NTTData/ProdOrdCnfrmPrcs/covercraftpp/model/LogicHelper",
     "com/covercraft/NTTData/ProdOrdCnfrmPrcs/covercraftpp/model/Constants"
-], function (BaseController, JSONModel, formatter, Filter, FilterOperator, oMsgToast, oMsgBox,Fragment, oLogicHelper, oConstants) {
+], function (BaseController, JSONModel, formatter, Filter, FilterOperator, oMsgToast, oMsgBox, Fragment, oLogicHelper, oConstants) {
     "use strict";
-    var i18n, sPath, oDataModel, regFloatExp = /^(?:[1-9]\d*|0)?(?:\.\d+)?$/gm, regIntExp = /^[0-9]{1,10}$/g, errorCount = 0,errorCount1 = 0, OpenQty = 0,StartPrcFlag = false, OpenOprQty = 0;
+    var i18n, sPath, oDataModel, regFloatExp = /^(?:[1-9]\d*|0)?(?:\.\d+)?$/gm, regIntExp = /^[0-9]{1,10}$/g, errorCount = 0, errorCount1 = 0, errorCount2 = 0, OpenQty = 0, StartPrcFlag = false, OpenOprQty = 0;
     return BaseController.extend("com.covercraft.NTTData.ProdOrdCnfrmPrcs.covercraftpp.controller.Worklist", {
 
         formatter: formatter,
@@ -26,14 +26,20 @@ sap.ui.define([
          */
         onInit: function () {
             //Set text here
-            // added by Mastan
-            // location.reload();
+
             this._setTextComponents();
+            // debugger;
+            var userInfo = sap.ushell.Container.getService("UserInfo");
+            this.startId = userInfo.getId();
+            this.finishId = userInfo.getId();
+
+
             //Fetch i18n Model
             i18n = this.getOwnerComponent().getModel("i18n").getResourceBundle();
             oDataModel = this.getOwnerComponent().getModel();
             //start process fragment loading.
             if (!this._startProcessDialog) {
+
                 this._startProcessDialog = this.loadFragment({
                     name: "com.covercraft.NTTData.ProdOrdCnfrmPrcs.covercraftpp.fragments.StartProcess"
                 });
@@ -67,17 +73,32 @@ sap.ui.define([
          * @public
          */
         onIconTabSelection: function (oEvent) {
+            // debugger;
             var selectedTabKey = oEvent.getParameters().selectedKey;
             var obj = "";
+
             switch (selectedTabKey) {
                 case oConstants.iconTabBar_StartProcess:
+                    // this.getView().byId("Save1").setVisible(true);
+                    // this.getView().byId("so.upload.btnnSave").setVisble(false);
                     obj = this._getStartProcessJSONObject();
                     this.getView().getModel("startProcessModel").setData(obj);
-
-                    break;
+                    this.getView().getModel("startProcessModel").refresh();
+                    // if(selectedTabKey === "StartProcess"){
+                    //     this.getView().byId("Save1").setVisible(true);
+                    //     this.getView().byId("Save8").setVisible(false);
+                    // }
+                            break;
                 case oConstants.iconTabBar_FinishProcess:
+                    // if(selectedTabKey === "FinishProcess"){
+                    //     this.getView().byId("Save1").setVisible(false);
+                    //     this.getView().byId("Save8").setVisible(true);
+                    // }
+                    // this.getView().byId("so.upload.btnSave").setVisble(false);
                     obj = this._getFinishProcessJSONObject();
                     this.getView().getModel("finishProcessModel").setData(obj);
+                    this.getView().getModel("finishProcessModel").refresh();
+                    
                     break;
                 default:
                     return;
@@ -157,7 +178,7 @@ sap.ui.define([
             this._valueHelpDialogProdOrder.open();
         },
 
-        onPersNoF4: function(oEvent){
+        onPersNoF4: function (oEvent) {
             if (!this._valueHelpDialogPerson) {
                 this._valueHelpDialogPerson = sap.ui.xmlfragment(
                     "com.covercraft.NTTData.ProdOrdCnfrmPrcs.covercraftpp.fragments.PersonalNum",
@@ -167,10 +188,21 @@ sap.ui.define([
             }
             this._valueHelpDialogPerson.open();
         },
-       
 
-        _handlePersonValueHelpConfirm: function(oEvent){
-            debugger;
+
+        onFinishPersNoF4: function(oEvent){
+            if (!this._valueHelpDialogFinishPerson) {
+                this._valueHelpDialogFinishPerson = sap.ui.xmlfragment(
+                    "com.covercraft.NTTData.ProdOrdCnfrmPrcs.covercraftpp.fragments.FinishPerson",
+                    this
+                );
+                this.getView().addDependent(this._valueHelpDialogFinishPerson);
+            }
+            this._valueHelpDialogFinishPerson.open();
+        },
+
+        _handlePersonValueHelpConfirm: function (oEvent) {
+            // debugger;
             this.personActivityInput = oEvent.getSource();
             var oSelectedPerson = oEvent.getParameter("selectedItem");
             var sPersonValue = oSelectedPerson.getTitle();
@@ -178,18 +210,24 @@ sap.ui.define([
             this.getView().getModel("startProcessModel").setProperty("/PersNo", sPersonValue);
             // }
             // else if (this.personActivityInput.getName()  === oConstants.finishPrcPersNo) {
-                this.getView().getModel("finishProcessModel").setProperty("/PersNo", sPersonValue);
+            // this.getView().getModel("finishProcessModel").setProperty("/PersNo", sPersonValue);
             // }
-       
+
         },
 
+        _handleFinishPersonValueHelpConfirm : function(oEvent){
+            // this.personActivityInput = oEvent.getSource();
+            var oSelectedFinishPerson = oEvent.getParameter("selectedItem");
+            var sPersonFinishValue = oSelectedFinishPerson.getTitle();
+            this.getView().getModel("finishProcessModel").setProperty("/PersNo", sPersonFinishValue);
+        },
         /**
         * Event handler of prod order change
         * @param {oEvt} Event Handle for prod order input
         * @public
         */
         onProdOrderChange: function (oEvt) {
-            debugger;
+            // debugger;
             StartPrcFlag = true;
             var oVal = oEvt.getSource().getValue();
             this._oSource = oEvt.getSource();
@@ -204,7 +242,7 @@ sap.ui.define([
                     sap.ui.core.BusyIndicator.hide();
                     if (this._oSource.getName() === oConstants.StartProdOrd) {
                         if (response.results.length > 0) {
-                          
+
                             this._oSource.setValue(response.results[0].AUFNR);
                             this.getView().getModel("startProcessModel").setProperty("/ProdOrd", response.results[0].AUFNR);
                             this.getView().getModel("startProcessModel").setProperty("/formEditable", true);
@@ -415,7 +453,7 @@ sap.ui.define([
                             if (this._oSource.getName() === oConstants.startPrcPersNo) {
                                 if (response.Message === "") {
                                     this._oSource.setValue(response.PersNo);
-                                   this.getView().getModel("startProcessModel").setProperty("/StrtOfSetTime", formatter.timeFormatter(response.SysTime));
+                                    this.getView().getModel("startProcessModel").setProperty("/StrtOfSetTime", formatter.timeFormatter(response.SysTime));
                                 } else {
                                     this._oSource.setValue("");
                                     this.getView().getModel("startProcessModel").setProperty("/PersNo", "");
@@ -504,7 +542,7 @@ sap.ui.define([
             */
         onFinishProcessFormDecimalInputChange: function (oEvt) {
             var oVal = oEvt.getSource().getValue();
-            debugger;
+            // debugger;
             var finisgPrcData = this.getView().getModel("finishProcessModel").getData();
             if (oVal.trim().length > 0) {
                 oVal = formatter.formatFloat(oVal);
@@ -517,7 +555,7 @@ sap.ui.define([
                 } else {
                     // all quanties should not be greater than Open Quantity
                     var totalQty = parseFloat(finisgPrcData.Yield) + parseFloat(finisgPrcData.ScrapQty) + parseFloat(finisgPrcData.RewrkQty);
-                    if (totalQty > parseFloat(OpenOprQty)){
+                    if (totalQty > parseFloat(OpenOprQty)) {
                         oMsgBox.error(i18n.getText("totalQtyMsg"));
                     }
                     if (totalQty > parseFloat(OpenQty)) {
@@ -529,7 +567,7 @@ sap.ui.define([
                         } else {
                             this.getView().getModel("finishProcessModel").setProperty("/FinalConf", false);
                         }
-                        oEvt.getSource().setValue(oVal); 
+                        oEvt.getSource().setValue(oVal);
 
 
                         return;
@@ -543,16 +581,16 @@ sap.ui.define([
                             this.getView().getModel("finishProcessModel").setProperty("/ReasnVarMandatory", true);
                         }
                     }
-                        //reason code is mandatiry if scrap entered by Mastan
+                    //reason code is mandatiry if scrap entered by Mastan
 
-                        if (oEvt.getSource().getName() === oConstants.ScrapQty) {
-                            if (oVal === "0") {
-                                this.getView().getModel("finishProcessModel").setProperty("/ReasnVarMandatory", false);
-                            }
-                            else {
-                                this.getView().getModel("finishProcessModel").setProperty("/ReasnVarMandatory", true);
-                            }
+                    if (oEvt.getSource().getName() === oConstants.ScrapQty) {
+                        if (oVal === "0") {
+                            this.getView().getModel("finishProcessModel").setProperty("/ReasnVarMandatory", false);
                         }
+                        else {
+                            this.getView().getModel("finishProcessModel").setProperty("/ReasnVarMandatory", true);
+                        }
+                    }
 
                     //enable final confirmation
                     if (totalQty === parseFloat(OpenQty)) {
@@ -589,6 +627,7 @@ sap.ui.define([
 
         },
 
+      
 
         /* =========================================================== */
         /* internal methods                                            */
@@ -600,80 +639,82 @@ sap.ui.define([
             //     return;
             // }
             debugger;
-            // this._oSource = oEvent.getSource();
+            // this._oSource = oEvent.getSource(); 
             var startProcessData = this.getView().getModel("startProcessModel").getData();
 
             if (startProcessData.formEditable) {
                 this._performValidations();
-                if (errorCount > 1) {
+                if (errorCount > 1 || errorCount1 > 1) {
                     return;
                 }
                 sPath = "/PRDORD_GET_PRSNL_IDSet(PersNo='" + startProcessData.PersNo + "',ProdOrd='" + startProcessData.ProdOrd + "',ProdOrdOpr='" + startProcessData.ProdOrdOpr + "',Flag='S')";
-                 var aFilters = [];
-                    // aFilters.push(new sap.ui.model.Filter("PersNo", sap.ui.model.FilterOperator.EQ, oVal));
-                    sap.ui.core.BusyIndicator.show();
-                    oLogicHelper.callGETOData(oDataModel, sPath, aFilters)
-                        .then(function (response) {
-                            StartPrcFlag = false;
-                            sap.ui.core.BusyIndicator.hide();
-                            if (this._oSource.getName() === oConstants.startPrcPersNo) {
-                                if (response.Message === "") {
-                                    sPath = "/PRDORD_STRT_OPRSet";
-                var oEntry = {
-                    "ProdOrd": startProcessData.ProdOrd,
-                    "ProdOrdOpr": startProcessData.ProdOrdOpr,
-                    "PersNo": startProcessData.PersNo,
-                    "TimeIdNum": startProcessData.TimeIdNum,
-                    "StrtOfSetDate": startProcessData.StrtOfSetDate,
-                    "StrtOfSetTime": formatter.resolveTimeFormat(startProcessData.StrtOfSetTime),
-                    "WrkCenter": startProcessData.WrkCenter,
-                    "Plant": startProcessData.Plant,
-                    "ConfrmText": startProcessData.ConfrmText
-                };
-                var oSuccess = function (oData) {
-                    sap.ui.core.BusyIndicator.hide();
-                    oMsgBox.success("Success");
-                    this._setStartProcessJSONModel();
-                }.bind(this);
-                var oError = function (error) {
-                    sap.ui.core.BusyIndicator.hide();
-                    // var oXmlData = error.responseText;
-                    // var oXMLModel = new sap.ui.model.json.JSONModel();
-                    // oXMLModel.setJSON(oXmlData);
-                }.bind(this);
+                var aFilters = [];
+                // aFilters.push(new sap.ui.model.Filter("PersNo", sap.ui.model.FilterOperator.EQ, oVal));
                 sap.ui.core.BusyIndicator.show();
-                this.getOwnerComponent().getModel().create(sPath, oEntry, {
-                    success: oSuccess,
-                    error: oError
-                });
+                oLogicHelper.callGETOData(oDataModel, sPath, aFilters)
+                    .then(function (response) {
+                        StartPrcFlag = false;
+                        sap.ui.core.BusyIndicator.hide();
+                        // if (this._oSource.getName() === oConstants.startPrcPersNo) {
+                        if (response.Message === "") {
+                            sPath = "/PRDORD_STRT_OPRSet";
+                            var oEntry = {
+                                "ProdOrd": startProcessData.ProdOrd,
+                                "ProdOrdOpr": startProcessData.ProdOrdOpr,
+                                "PersNo": startProcessData.PersNo,
+                                "TimeIdNum": startProcessData.TimeIdNum,
+                                "StrtOfSetDate": startProcessData.StrtOfSetDate,
+                                "StrtOfSetTime": formatter.resolveTimeFormat(startProcessData.StrtOfSetTime),
+                                "WrkCenter": startProcessData.WrkCenter,
+                                "Plant": startProcessData.Plant,
+                                "ConfrmText": startProcessData.ConfrmText
+                            };
+                            var oSuccess = function (oData) {
+                                sap.ui.core.BusyIndicator.hide();
+                                oMsgBox.success("Success");
+                                this._setStartProcessJSONModel();
+                            }.bind(this);
+                            var oError = function (error) {
+                                sap.ui.core.BusyIndicator.hide();
+                                // var oXmlData = error.responseText;
+                                // var oXMLModel = new sap.ui.model.json.JSONModel();
+                                // oXMLModel.setJSON(oXmlData);
+                            }.bind(this);
+                            sap.ui.core.BusyIndicator.show();
+                            this.getOwnerComponent().getModel().create(sPath, oEntry, {
+                                success: oSuccess,
+                                error: oError
+                            });
 
 
 
-                                //     this._oSource.setValue(response.PersNo);
-                                //    this.getView().getModel("startProcessModel").setProperty("/StrtOfSetTime", formatter.timeFormatter(response.SysTime));
-                                } else {
-                                    this._oSource.setValue("");
-                                    this.getView().getModel("startProcessModel").setProperty("/PersNo", "");
-                                    oMsgToast.show(response.Message);
-                                    // return;
-                                }
-                            }
-                        }.bind(this))
-                        .catch(function (error) {
-                            StartPrcFlag = false;
-                            sap.ui.core.BusyIndicator.hide();
-                            // that.ErrorHandling(error);
-                        });
+                            //     this._oSource.setValue(response.PersNo);
+                            //    this.getView().getModel("startProcessModel").setProperty("/StrtOfSetTime", formatter.timeFormatter(response.SysTime));
+                        } else {
+                            this._oSource.setValue("");
+                            this.getView().getModel("startProcessModel").setProperty("/PersNo", "");
+                            oMsgToast.show(response.Message);
+                            // return;
+                        }
+                        // }
+                    }.bind(this))
+                    .catch(function (error) {
+                        StartPrcFlag = false;
+                        sap.ui.core.BusyIndicator.hide();
+                        // that.ErrorHandling(error);
+                    });
 
-                
+
             } else {
                 return;
             }
         },
         //Start Process validations
         _performValidations: function () {
+            // debugger;
             var startProcessData = this.getView().getModel("startProcessModel").getData();
             errorCount = 0;
+            errorCount1 = 0;
             if (startProcessData.ProdOrd === "" || startProcessData.ProdOrd === undefined) {
                 errorCount += 2;
             }
@@ -684,16 +725,24 @@ sap.ui.define([
 
                 errorCount += 2;
             }
+            if (OpenOprQty === "" || OpenOprQty === undefined || OpenOprQty === "0 ") {
+                errorCount1 += 2;
+
+            }
             if (errorCount > 1) {
                 oMsgBox.error(i18n.getText("PleaseEnterMandatoryValues"));
             }
-           
+            if (errorCount1 > 1) {
+                oMsgBox.error("No Open Operation Quantity to Start Process");
+            }
+
 
         },
 
-      
+
         //Finish process create call 
         _finishProcessCreate: function () {
+            debugger;
             var finishProcessData = this.getView().getModel("finishProcessModel").getData();
             if (finishProcessData.formEditable) {
                 this._performFinishPrcValidations();
@@ -707,7 +756,7 @@ sap.ui.define([
                     "PersNo": finishProcessData.PersNo,
                     "TimeIdNum": finishProcessData.TimeIdNum,
                     "StrtOfSetDate": finishProcessData.StrtOfSetDate,
-                    "FinshOfSetDate" : finishProcessData.FinshOfSetDate,
+                    "FinshOfSetDate": finishProcessData.FinshOfSetDate,
                     "FinshOfSetTime": formatter.resolveTimeFormat(finishProcessData.FinshOfSetTime),
                     "ConfrmText": finishProcessData.ConfrmText,
                     "Yield": finishProcessData.Yield,
@@ -740,7 +789,7 @@ sap.ui.define([
                 return;
             }
         },
-        //Start Process validations
+        //Finish Process validations
         _performFinishPrcValidations: function () {
             var finishProcessData = this.getView().getModel("finishProcessModel").getData();
             var totalQty = parseFloat(finishProcessData.Yield) + parseFloat(finishProcessData.ScrapQty) + parseFloat(finishProcessData.RewrkQty);
@@ -762,29 +811,29 @@ sap.ui.define([
             }
 
 
-//Added by MAstan//
-if (parseFloat(finishProcessData.ScrapQty) > 0) {
-    if (finishProcessData.ReasnVar === "" || finishProcessData.ReasnVar === undefined) {
-        errorCount += 2;
-    }
-}
+            //Added by MAstan//
+            if (parseFloat(finishProcessData.ScrapQty) > 0) {
+                if (finishProcessData.ReasnVar === "" || finishProcessData.ReasnVar === undefined) {
+                    errorCount += 2;
+                }
+            }
 
-// if (totalQty > parseFloat(OpenQty)) {
-    if (totalQty > OpenQty) {
-    debugger;
-    // oEvt.getSource().setValue("0");
-    errorCount1 += 2;
-    // oMsgBox.show(i18n.getText("totalQtyMsg"));
-}
+            // if (totalQty > parseFloat(OpenQty)) {
+            if (totalQty > OpenQty) {
+                // debugger;
+                // oEvt.getSource().setValue("0");
+                errorCount1 += 2;
+                // oMsgBox.show(i18n.getText("totalQtyMsg"));
+            }
 
-if (totalQty > OpenOprQty) {
-    debugger;
-    // oEvt.getSource().setValue("0");
-    errorCount1 += 2;
-    // oMsgBox.show(i18n.getText("totalQtyMsg"));
-}
+            if (totalQty > OpenOprQty) {
+                // debugger;
+                // oEvt.getSource().setValue("0");
+                errorCount1 += 2;
+                // oMsgBox.show(i18n.getText("totalQtyMsg"));
+            }
 
-//ended by Mastan
+            //ended by Mastan
 
             if (errorCount > 1) {
                 oMsgBox.error(i18n.getText("PleaseEnterMandatoryValues"));
@@ -802,6 +851,7 @@ if (totalQty > OpenOprQty) {
         //JSON model for start process
         _setStartProcessJSONModel: function () {
             var obj = this._getStartProcessJSONObject();
+            // obj.PersNo = this.email;
             var ostrtProcessModel = new JSONModel();
             ostrtProcessModel.setData(obj);
             this.getView().setModel(ostrtProcessModel, "startProcessModel");
@@ -809,6 +859,7 @@ if (totalQty > OpenOprQty) {
         //JSON model for finish process
         _setFinishProcessJSONModel: function () {
             var obj = this._getFinishProcessJSONObject();
+            // obj.PersNo = this.email;
             var ofinishProcessModel = new JSONModel();
             ofinishProcessModel.setData(obj);
             this.getView().setModel(ofinishProcessModel, "finishProcessModel");
@@ -1028,7 +1079,7 @@ if (totalQty > OpenOprQty) {
         * @public
         */
         _handleActivityValueHelpConfirm: function (oEvt) {
-            debugger;
+            // debugger;
             // var oSelectedProduct = oEvt.getParameter("selectedItem");
             // var oSelectedObject = oSelectedProduct.getBindingContext("PrdOrdActivityData").getObject();
             var oSelectedObject = oEvt.getParameters().selectedContexts[0].getObject()
@@ -1059,7 +1110,7 @@ if (totalQty > OpenOprQty) {
             var obj = {
                 "ProdOrd": "",
                 "ProdOrdOpr": "",
-                "PersNo": "",
+                "PersNo": this.startId,
                 "TimeIdNum": "",
                 "StrtOfSetDate": oDate,
                 "StrtOfSetDateMiniDate": oDate,
@@ -1079,7 +1130,7 @@ if (totalQty > OpenOprQty) {
             var obj = {
                 "ProdOrd": "",
                 "ProdOrdOpr": "",
-                "PersNo": "",
+                "PersNo": this.finishId,
                 "TimeIdNum": "",
                 "FinshOfSetDate": new Date(),
                 "FinshOfSetDateMiniDate": new Date(),
